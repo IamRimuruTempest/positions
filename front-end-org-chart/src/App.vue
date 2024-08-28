@@ -2,6 +2,7 @@
 import ModalInsert from './components/ModalInsert.vue';
 import ModalUpdate from './components/ModalUpdate.vue';
 import ModalShow from './components/ModalShow.vue';
+import { EyeIcon, PencilSquareIcon, TrashIcon } from '@heroicons/vue/24/outline';
 import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
 
@@ -9,61 +10,27 @@ const positions = ref([]);
 const currentPosition = ref(null);
 const showPosition = ref(null)
 
-const supervisors = ref([]);
-const title = "Hello";
-
 
 const searchPosition = ref('')
 const searchReportsTo = ref('')
 
 
 const error = ref(null);
-const success = ref(false);
-
 const isModalInsert = ref(false);
 const isModalUpdate = ref(false);
 const isModalShow = ref(false);
-const isInsert = ref(true);
 
 const fetchPositions = async () => {
   try {
     const response = await axios.get('http://localhost:8000/api/v1/positions'); // Replace with your endpoint
     positions.value = response.data.data;
+    console.log(positions.value)
 
   } catch (err) {
     error.value = err;
     console.error('There was an error!', err);
   }
 };
-
-const fetchSinglePosition = async (position) => {
-  try {
-    await axios.put(`http://localhost:8000/api/v1/positions/${position.id}`);
-    showPosition.value = response.data.data;
-
-    console.log(showPosition.value);
-
-  } catch (err) {
-    error.value = err;
-    console.error('There was an error!', err);
-  }
-};
-
-const fetchSupervisors = async () => {
-  try {
-    const response = await axios.get('http://localhost:8000/api/v1/positions'); // Replace with your endpoint
-    supervisors.value = response.data.data;
-
-    // console.log(response.data.data);
-
-  } catch (err) {
-    error.value = err;
-    console.error('There was an error!', err);
-  }
-};
-
-
-
 
 
 const deletePosition = async (position) => {
@@ -79,27 +46,26 @@ const deletePosition = async (position) => {
 };
 
 
-const editPosition = async (data) => {
-  // tmp.value = data.id
-  currentPosition.value = data
 
-}
 
 
 
 onMounted(() => {
 
   fetchPositions();
-  fetchSupervisors();
+  // fetchSupervisors();
 });
 
-const handleUpdateClick = (position) => {
+const handleUpdateClick = (pos) => {
   openUpdateModal();
-  editPosition(position);
+  editPosition(pos);
 };
 
-const handleShow = (position) => {
-  fetchSinglePosition(position);
+const handleShow = (pos) => {
+  // fetchSinglePosition(position);
+
+  showPosition.value = pos;
+  console.log(showPosition.value)
   openShowModal();
 };
 
@@ -115,7 +81,9 @@ const openShowModal = () => {
   isModalShow.value = true
 };
 
-
+const editPosition = async (data) => {
+  currentPosition.value = data
+}
 
 const filteredPositions = computed(() => {
   return positions.value.filter(position => {
@@ -130,22 +98,20 @@ const filteredPositions = computed(() => {
 
 
 
-
 </script>
 
 <template>
 
-  <OrgChart />
 
-  <!-- Blog Article -->
   <div class="content-center">
     <div class=" max-w-5xl px-4 pt-6 lg:pt-10 pb-12 sm:px-6 lg:px-8 mx-auto">
       <div class="max-w-4xl">
         <ModalShow v-model:isModalShow="isModalShow" v-if="isModalShow" :showPosition="showPosition" />
-        <ModalInsert v-model:isModalInsert="isModalInsert" v-if="isModalInsert" :fetchPositions="fetchPositions" />
-        <ModalUpdate v-model:isModalUpdate="isModalUpdate" v-if="isModalUpdate" :fetchPositions="fetchPositions"
-          :currentPosition="currentPosition" />
-        <!-- <TheWelcome /> -->
+        <ModalInsert v-model:isModalInsert="isModalInsert" v-if="isModalInsert" :positions="positions"
+          :fetchPositions="fetchPositions" />
+        <ModalUpdate v-model:isModalUpdate="isModalUpdate" v-if="isModalUpdate" :positions="positions"
+          :fetchPositions="fetchPositions" :currentPosition="currentPosition" />
+
         <div class="w-full mb-10">
           <h1 class="text-3xl font-bold uppercase mb-3">
             Organizational Chart
@@ -164,10 +130,10 @@ const filteredPositions = computed(() => {
 
               <select v-model="searchReportsTo" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-40
  p-2.5 ">
-                <option selected>All Supervisor</option>
-                <option v-for="supervisor in supervisors" :key="supervisor.id" :value="supervisor.id"> {{
+                <option selected value="">All Supervisor</option>
+                <option v-for="supervisor in positions" :key="supervisor.id" :value="supervisor.id"> {{
                   supervisor.position
-                  }}
+                }}
                 </option>
               </select>
             </div>
@@ -203,13 +169,13 @@ const filteredPositions = computed(() => {
                             {{ position.supervisor.position }}
                           </span></td>
 
-                        <td class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium space-x-4">
-                          <button @click="handleShow(position)" type="button"
-                            class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-none focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none ">Show</button>
-                          <button @click="handleUpdateClick(position)" type="button"
-                            class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-none focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none ">Update</button>
-                          <button @click="deletePosition(position.id)" type="button"
-                            class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-red-600 hover:text-red-800 focus:outline-none focus:text-red-800 disabled:opacity-50 disabled:pointer-events-none ">Delete</button>
+                        <td class="flex justify-end px-6 py-4 whitespace-nowrap  text-sm font-medium space-x-4">
+                          <EyeIcon @click="handleShow(position)"
+                            class="h-5 w-auto hover:cursor-pointer hover:text-green-500" />
+                          <PencilSquareIcon @click="handleUpdateClick(position)"
+                            class="h-5 w-auto hover:cursor-pointer hover:text-blue-500" />
+                          <TrashIcon @click="deletePosition(position.id)"
+                            class="h-5 w-auto hover:cursor-pointer hover:text-red-500" />
                         </td>
                       </tr>
 

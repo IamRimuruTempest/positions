@@ -14,7 +14,7 @@ class Position extends Model
 
     public function supervisor()
     {
-        return $this->belongsTo(Position::class, 'reports_to');
+        return $this->belongsTo(Position::class, 'reports_to', 'id');
     }
 
     public function subordinates()

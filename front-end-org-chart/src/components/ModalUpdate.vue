@@ -17,21 +17,24 @@ const props = defineProps({
     currentPosition: {
         type: Object
     },
+    positions: {
+        type: Array,
+        required: true,
+    },
 })
 
-const newPosition = ref();
+const newPosition = ref({});
 
 
 const emit = defineEmits(['update:isModalUpdate']);
 
 const updatePosition = async () => {
-    // console.log(newPosition.value, "new position");
     try {
 
         await axios.put(`http://localhost:8000/api/v1/positions/${props.currentPosition.id}`, newPosition.value);
 
         // Reset the form and close the modal
-        newPosition.value = { position: '', reports_to: null };
+        newPosition.value = {};
         closeModal();
 
         // Fetch the updated positions
@@ -42,30 +45,19 @@ const updatePosition = async () => {
     }
 };
 
-const fetchSupervisors = async () => {
-    try {
-        const response = await axios.get('http://127.0.0.1:8000/api/v1/positions'); // Replace with your endpoint
-        supervisors.value = response.data.data;
 
-        // console.log(response.data.data);
-
-    } catch (err) {
-        error.value = err;
-        console.error('There was an error!', err);
-    }
-};
 
 
 
 onMounted(() => {
-    fetchSupervisors();
+    supervisors.value = props.positions
+    newPosition.value = props.currentPosition;
+    console.log(props.currentPosition);
+    console.log(props.positions);
+
 });
 
-watch(() => props.currentPosition, (current) => {
-    if (current) {
-        newPosition.value = { ...current };
-    }
-}, { immediate: true });
+
 
 const closeModal = () => {
     emit('update:isModalUpdate', false);
@@ -90,6 +82,8 @@ const closeModal = () => {
                             <h3 class="text-base font-semibold leading-6 text-gray-900" id="modal-title">Update
                                 Position </h3>
 
+
+
                             <div class="mt-2">
                                 <form @submit.prevent="updatePosition()" class="">
                                     <div class="mb-3">
@@ -103,9 +97,10 @@ const closeModal = () => {
                                         <label class="block mb-2 text-sm font-medium text-gray-900 ">Report To</label>
                                         <select v-model="newPosition.reports_to"
                                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
-                                            <option selected>Select Supervisor</option>
+                                            <option selected value="">Select Supervisor</option>
                                             <option v-for="supervisor in supervisors" :key="supervisor.id"
-                                                :value="supervisor.id"> {{
+                                                :value="supervisor.id"
+                                                :disabled="supervisor.position === newPosition.position"> {{
                                                     supervisor.position
                                                 }}
                                             </option>

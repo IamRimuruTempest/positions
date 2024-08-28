@@ -1,9 +1,7 @@
 <script setup>
 import { defineProps, defineEmits } from 'vue';
 import { ref, onMounted, watch } from 'vue';
-const supervisors = ref([]);
-const error = ref(null);
-import axios from 'axios';
+
 
 const props = defineProps({
     isModalShow: {
@@ -18,18 +16,17 @@ const props = defineProps({
 
 const newPosition = ref();
 
-
 const emit = defineEmits(['update:isModalOpen']);
 
-watch(() => props.showPosition, (current) => {
-    if (current) {
-        newPosition.value = { ...current };
-    }
-}, { immediate: true });
 
 const closeModal = () => {
     emit('update:isModalShow', false);
 };
+
+
+onMounted(() => {
+    newPosition.value = props.showPosition
+});
 </script>
 <template>
 
@@ -47,14 +44,14 @@ const closeModal = () => {
 
 
                         <div class="text-center  sm:mt-0 sm:text-left">
-                            <h3 class="text-base font-semibold leading-6 text-gray-900" id="modal-title">View
-                                Position </h3>
 
-                            <div class="mt-2">
-                                <h1>Position: {{ newPosition }}</h1>
-                                <h1>Position:</h1>
-
-
+                            <div v-if="newPosition">
+                                <h1>Position: {{ newPosition.position }}</h1>
+                                <h1 v-if="newPosition.reports_to">Reports To: {{ newPosition.supervisor.position }}</h1>
+                                <h1 v-else>Reports To: None (This is the top-level position)</h1>
+                            </div>
+                            <div v-else>
+                                Loading...
                             </div>
                         </div>
 

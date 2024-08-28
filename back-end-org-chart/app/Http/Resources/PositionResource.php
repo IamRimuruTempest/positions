@@ -22,12 +22,7 @@ class PositionResource extends JsonResource
             'reports_to' => $this->reports_to,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'supervisor' => $this->whenLoaded('supervisor', function () {
-                return [
-                    'id' => $this->supervisor->id,
-                    'position' => $this->supervisor->position,
-                ];
-            }),
+            'supervisor' => $this->whenLoaded('supervisor'),
         ];
     }
 }

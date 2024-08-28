@@ -1,14 +1,16 @@
 <script setup>
 import { defineProps, defineEmits } from 'vue';
 import { ref, onMounted } from 'vue';
-const supervisors = ref([]);
-const error = ref(null);
 import axios from 'axios';
 
 const props = defineProps({
 
     isModalInsert: {
         type: Boolean,
+        required: true,
+    },
+    positions: {
+        type: Array,
         required: true,
     },
     fetchPositions: {
@@ -18,42 +20,29 @@ const props = defineProps({
 
 })
 
+const supervisors = ref([]);
+const error = ref(null);
+
 const newPosition = ref({
     position: '',
     reports_to: null,
 });
 
-
-const tmp = ref(null);
-
-
-
 const emit = defineEmits(['insert:isModalInsert']);
 
-const fetchSupervisors = async () => {
-    try {
-        const response = await axios.get('http://localhost:8000/api/v1/positions'); // Replace with your endpoint
-        supervisors.value = response.data.data;
 
-        // console.log(response.data.data);
-
-    } catch (err) {
-        error.value = err;
-        console.error('There was an error!', err);
-    }
-};
 
 const createPosition = async () => {
     try {
         console.log(newPosition.value, "teset")
         const response = await axios.post('http://localhost:8000/api/v1/positions', newPosition.value);
         console.log('Create response:', response.data);
-        // success.value = true;
         newPosition.value = { position: '', supervisor_id: null };
         closeModal()
         props.fetchPositions();
     } catch (err) {
-        error.value = err;
+        error.value = err.response.data.message;
+        // console.log(err.response.data);
         console.error('There was an error creating the position!', err);
     }
 };
@@ -62,7 +51,7 @@ const createPosition = async () => {
 
 
 onMounted(() => {
-    fetchSupervisors();
+    supervisors.value = props.positions;
 });
 
 const closeModal = () => {
@@ -94,6 +83,7 @@ const closeModal = () => {
                                         <input type="text" v-model="newPosition.position"
                                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
                                             required />
+                                        <p class="mt-3 text-red-600 text-xs">{{ error }}</p>
                                     </div>
 
                                     <div class="relative z-0 w-full mb-3 group">

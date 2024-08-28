@@ -15,7 +15,7 @@ class PositionController extends Controller
      */
     public function index()
     {
-        $positions = Position::with('supervisor')->get();
+        $positions = Position::with('supervisor')->latest()->get();
         return PositionResource::collection($positions);
     }
 
@@ -41,7 +41,17 @@ class PositionController extends Controller
      */
     public function show(Position $position)
     {
-        return PositionResource::make($position);
+
+        // return PositionResource::make($position->load('supervisor'));
+
+        $position = Position::with('supervisor')
+            ->where('report_to', $position->id)
+            ->get();
+
+
+        // return response()->json($position);
+
+        return PositionResource::collection($position);
     }
 
     /**
