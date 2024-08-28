@@ -1,54 +1,56 @@
-Prerequisites
-Before you begin, ensure you have met the following requirements:
+# Prerequisites
+Before you begin, ensure you have met the following requirements: <br />
 
-PHP: Version 8 or higher
-Composer: Dependency Manager for PHP
-Node.js: Version 14 or higher
-NPM/Yarn: Package Manager for JavaScript
-MySQL: Database Server (or another supported database)
-
-
-Installation - Backend (Laravel)
-
-1. Clone the repository
-git clone <repository-url>
-cd <repository-name>
+PHP: Version 8 or higher <br />
+Composer: Dependency Manager for PHP <br />
+Node.js: Version 14 or higher <br />
+NPM/Yarn: Package Manager for JavaScript <br />
+MySQL: Database Server (or another supported database) <br />
 
 
-2. Install PHP dependencies
-composer install
-
-3. Set up your environment file
-Copy the example environment file and set up your .env file:
-cp .env.example .env
-
-Edit the .env file to configure your database and other environment settings.
 
 
-4. Generate an application key
-php artisan key:generate
+Installation - Backend (Laravel) <br />
+<br />
+1. Clone the repository <br />
+git clone <repository-url> <br />
+cd <repository-name> <br />
 
 
-5. Run migrations
-php artisan migrate
+2. Install PHP dependencies <br />
+composer install <br />
 
+3. Set up your environment file <br />
+Copy the example environment file and set up your .env file: <br />
+cp .env.example .env <br />
 
-6. Start the Laravel development server
-php artisan serve
-The server will start at http://localhost:8000.
-
-
-Installation - Frontend (Vuejs)
-
-1. Navigate to the frontend directory
-cd <frontend-directory>
-
-2. Install JavaScript dependencies
-npm install
-# or
-yarn install
-
-3. Run the development server
-npm run dev
-# or
-yarn dev
+Edit the .env file to configure your database and other environment settings. <br />
+<br />
+<br />
+4. Generate an application key <br />
+php artisan key:generate <br />
+<br />
+<br />
+5. Run migrations <br />
+php artisan migrate <br />
+<br />
+<br />
+6. Start the Laravel development server <br />
+php artisan serve <br />
+The server will start at http://localhost:8000. <br />
+<br />
+<br />
+Installation - Frontend (Vuejs) <br />
+<br />
+1. Navigate to the frontend directory <br />
+cd <frontend-directory> <br />
+<br />
+2. Install JavaScript dependencies <br />
+npm install <br />
+or <br />
+yarn install <br />
+<br />
+3. Run the development server <br />
+npm run dev <br />
+or <br />
+yarn dev <br />
